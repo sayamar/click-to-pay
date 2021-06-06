@@ -2,9 +2,12 @@ package com.mybank.service;
 
 import java.sql.Timestamp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mybank.api.controller.AccountController;
 import com.mybank.api.response.PaymentResponse;
 import com.mybank.data.entities.Account;
 import com.mybank.data.entities.Transaction;
@@ -18,6 +21,8 @@ import com.mybank.service.handlers.TransactionHandler;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+	private static final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class); 
+	
 	private final AccountRepository accountRepository;
 	private final TransactionRepository transRepository;
 	private final TransactionHandler tnxHandler;
@@ -33,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Override
 	public PaymentResponse toOwnAccounts(FundTransferDetl payload) {
-
+		log.info("Initiate Funds transfer {} to ", payload.getCreditAccountId());
 		createTrannsactionsList(payload);
 		tranferringBalance(payload);
 		return PaymentResponse.createPaymentresponse(payload, "Success");
@@ -54,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
 	 */
 	private void tranferringBalance(FundTransferDetl payload) {
 
-		// Debit
+		log.info("Transferring the balance {} ", payload.getDebitAccountId(),payload.getCreditAccountId());
 		Account debitAccount = this.accountRepository.getAccountForUpdate(Long.valueOf(payload.getDebitAccountId()))
 				.orElseThrow(() -> new AccountNotFoundException(
 						"Debit Account : " + Long.valueOf(payload.getDebitAccountId()) + " Not exist"));
@@ -92,7 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
 	 * @param accList
 	 */
 	private void createTrannsactionsList(FundTransferDetl payload) {
-
+		log.info("Creating the debit transaction for {}", payload.getDebitAccountId());
 		Transaction tnxForDebit = new Transaction();
 		Transaction tnxForCredit = new Transaction();
 
@@ -102,7 +107,7 @@ public class PaymentServiceImpl implements PaymentService {
 		tnxForDebit.setCreatedOn(getToday());
 
 		this.transRepository.save(tnxForDebit);
-
+		log.info("Creating the credit transaction for {}", payload.getDebitAccountId());
 		tnxForCredit.setAccounNumber(Long.valueOf(payload.getCreditAccountId()));
 		tnxForCredit.setTransactionType("Credit");
 		tnxForCredit.setTnxAmunt(new Double(payload.getAmount()));

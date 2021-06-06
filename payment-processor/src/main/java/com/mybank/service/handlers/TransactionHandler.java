@@ -7,7 +7,7 @@ import com.mybank.data.entities.Account;
 @Component
 public class TransactionHandler {
 	
-	public Double  debitAccount( Double tnxAmount, Account account) {
+	public synchronized Double debitAccount( Double tnxAmount, Account account) {
 		Double currentBalance = getBalance(account);
 		currentBalance -= tnxAmount;
 		return currentBalance;
