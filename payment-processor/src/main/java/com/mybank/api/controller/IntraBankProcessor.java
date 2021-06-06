@@ -1,5 +1,7 @@
 package com.mybank.api.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +16,8 @@ import com.mybank.service.PaymentService;
 @RestController
 @RequestMapping("/process")
 public class IntraBankProcessor {
+	
+	private static final Logger log = LoggerFactory.getLogger(IntraBankProcessor.class);
 
 	private final PaymentService paymentService;
 
@@ -24,7 +28,7 @@ public class IntraBankProcessor {
 	@ExceptionHandler(FundTransferException.class)
 	@PostMapping("/initiateTransfer")
 	public PaymentResponse initiateTransfer(@RequestBody FundTransferDetl payload) {
-		System.out.println("Inside initiateTransfer"+payload.getReferenceId());
+		log.info("Inititate transfer for {}", payload.getReferenceId());
 		return paymentService.toOwnAccounts(payload);
 
 	}
