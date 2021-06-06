@@ -12,6 +12,9 @@ This Payment API has the following operations
 # Application Flow 
 
 
+![image](https://user-images.githubusercontent.com/24898025/120914546-6632c580-c6d1-11eb-9e91-836e987ea5da.png)
+
+
 
 ### Technology/Tools/Approach
 
@@ -72,6 +75,8 @@ This is Maven based java project. Having two modules
 	Integration Tests perfomed by using TestRestTemplate
 
 ### Improvements
-
+ 
+      Filestorage service needs to be implemented to manage the file
+      Unit test cases to be written using MockMVC
 
 
