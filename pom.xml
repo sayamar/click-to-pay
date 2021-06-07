@@ -21,11 +21,13 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.1</spring-cloud.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 
 	<modules>
-		<module>payment-service</module>
 		<module>payment-processor</module>
+		<module>payment-service</module>
 	</modules>
 	<dependencies>
 		<!-- Spring Boot dependencies -->

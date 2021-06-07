@@ -7,10 +7,11 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mybank.api.config.PaymentProcessorFeignConfig;
+import com.mybank.api.config.PaymentProcessorFeignCleint;
 import com.mybank.api.response.PaymentResponse;
-import com.mybank.data.entities.InboundPayments;
+import com.mybank.data.entities.InboundPayment;
 import com.mybank.data.repos.PaymentInboundRepository;
+import com.mybank.exception.InvalidDateFormatException;
 import com.mybank.intrabank.model.AdhocTransfer;
 import com.mybank.intrabank.model.FundTranferPayeeDetl;
 import com.mybank.intrabank.model.FundTransferDetl;
@@ -21,12 +22,12 @@ import com.mybank.mapper.PaymentInboundMapper;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-	private final PaymentProcessorFeignConfig paymentFeignClient;
+	private final PaymentProcessorFeignCleint paymentFeignClient;
 
 	private final PaymentInboundRepository paymentsInboundRepo;
 
 	@Autowired
-	public PaymentServiceImpl(PaymentProcessorFeignConfig paymentFeignClient,
+	public PaymentServiceImpl(PaymentProcessorFeignCleint paymentFeignClient,
 			PaymentInboundRepository paymentsInboundRepo) {
 
 		this.paymentFeignClient = paymentFeignClient;
@@ -51,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	
 	
-	private InboundPayments createInboundPaymentRecord(FundTransferDetl payload) {
+	private InboundPayment createInboundPaymentRecord(FundTransferDetl payload) {
 		return PaymentInboundMapper.INSTACE.fundTrasnferDetlToInboundPayments(payload);
 	}
 
@@ -93,7 +94,7 @@ public class PaymentServiceImpl implements PaymentService {
 			decider = formatter.parse(valueDate).compareTo(new Date());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Date format is invalid");
+			throw new InvalidDateFormatException("Expecting date format must be dd-MMM-yyyy ( eg. 20-Jun-2021" );
 		}
 		if (decider > 0 || decider == 0)
 			return true;

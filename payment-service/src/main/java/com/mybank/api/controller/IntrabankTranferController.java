@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mybank.api.response.PaymentResponse;
-import com.mybank.intrabank.model.AccountCheck;
 import com.mybank.intrabank.model.AdhocTransfer;
 import com.mybank.intrabank.model.FundTranferPayeeDetl;
 import com.mybank.intrabank.model.FundTransferDetl;
@@ -38,7 +37,7 @@ public class IntrabankTranferController {
 		this.paymentService = paymentService;
 	}
 	
-	@PostMapping(path=" /transfers/toOwnAccounts")
+	@PostMapping(path="transfers/toOwnAccounts")
 	public ResponseEntity<PaymentResponse> toOwnAccounts(@RequestHeader Map<String, String> header,
 			@RequestBody FundTransferDetl payload) {
 		log.info("Start: toOwnAccounts"+payload.getReferenceId());
@@ -46,28 +45,28 @@ public class IntrabankTranferController {
 		return new ResponseEntity<PaymentResponse>(response, HttpStatus.OK);
 	}
 	
-	@PostMapping(path=" /transfers/creditPayeeAccount")
+	@PostMapping(path="transfers/creditPayeeAccount")
 	public ResponseEntity<PaymentResponse> creditPayeeAccount(@RequestHeader Map<String, String> header,
 			@RequestBody FundTranferPayeeDetl payload) {
 		log.info("Start: adhocTransfer"+payload.referenceId);
 		return new ResponseEntity<PaymentResponse>(new PaymentResponse("IBXRTRR","Success"), HttpStatus.OK);
 	}
 	
-	@PostMapping(path="/transfers/adhocTransfer")
+	@PostMapping(path="transfers/adhocTransfer")
 	public ResponseEntity<PaymentResponse> adhocTransfer(@RequestHeader Map<String, String> header,
 			@RequestBody AdhocTransfer payload) {
 		log.info("Start: adhocTransfer"+payload.referenceId);
 		return new ResponseEntity<PaymentResponse>(new PaymentResponse("IBXRTRR","Success"), HttpStatus.OK);
 	}
 	
-	@GetMapping(path=" /transfers/{referenceId}/status")
+	@GetMapping(path="transfers/{referenceId}/status")
 	public ResponseEntity<PaymentResponse> getFundTranferStatus(@RequestHeader Map<String, String> header,
 			@PathVariable("referenceId") String  referenceId, @RequestParam String accountId) {
 		log.info("Start: adhocTransfer"+referenceId);
 		return new ResponseEntity<PaymentResponse>(new PaymentResponse("IBXRTRR","Success"), HttpStatus.OK);
 	} 
 	
-	@GetMapping(path=" /transfers/{referenceId}/reversal")
+	@GetMapping(path="transfers/{referenceId}/reversal")
 	public ResponseEntity<PaymentResponse> getFundTranferStatus(@RequestHeader Map<String, String> header,
 			@PathVariable("referenceId") String  referenceId, @RequestBody TransactionReversal payload) {
 		log.info("Start: adhocTransfer"+referenceId);
