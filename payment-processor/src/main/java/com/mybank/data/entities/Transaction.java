@@ -17,7 +17,7 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long tnxId;
 	@Column
-	private Long accounNumber;
+	private Long accountNumber;
 	@Column
 	private String transactionType;
 	
@@ -32,11 +32,12 @@ public class Transaction {
 	public void setTnxId(Long tnxId) {
 		this.tnxId = tnxId;
 	}
-	public Long getAccounNumber() {
-		return accounNumber;
+	
+	public Long getAccountNumber() {
+		return accountNumber;
 	}
-	public void setAccounNumber(Long accounNumber) {
-		this.accounNumber = accounNumber;
+	public void setAccountNumber(Long accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 	public String getTransactionType() {
 		return transactionType;

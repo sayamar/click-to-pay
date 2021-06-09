@@ -28,6 +28,7 @@ This Payment API has the following operations
 * Spring Boot Actuator
 * Integration Test - TestRestRemplate Client
 * API documentation - SpringFox Swagger
+* CompletableFuture - For Non-blocking synchronous calls
 
 
 

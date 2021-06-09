@@ -8,5 +8,6 @@ public interface PaymentService {
 	
 	public PaymentResponse toOwnAccounts(FundTransferDetl payload);
 	public Account getBalance(Long accountId);
+	
 
 }

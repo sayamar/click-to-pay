@@ -100,14 +100,14 @@ public class PaymentServiceImpl implements PaymentService {
 		Transaction tnxForDebit = new Transaction();
 		Transaction tnxForCredit = new Transaction();
 
-		tnxForDebit.setAccounNumber(Long.valueOf(payload.getDebitAccountId()));
+		tnxForDebit.setAccountNumber(Long.valueOf(payload.getDebitAccountId()));
 		tnxForDebit.setTransactionType("Debit");
 		tnxForDebit.setTnxAmunt(new Double(payload.getAmount()));
 		tnxForDebit.setCreatedOn(getToday());
 
 		this.transRepository.save(tnxForDebit);
 		log.info("Creating the credit transaction for {}", payload.getDebitAccountId());
-		tnxForCredit.setAccounNumber(Long.valueOf(payload.getCreditAccountId()));
+		tnxForCredit.setAccountNumber(Long.valueOf(payload.getCreditAccountId()));
 		tnxForCredit.setTransactionType("Credit");
 		tnxForCredit.setTnxAmunt(new Double(payload.getAmount()));
 		tnxForCredit.setCreatedOn(getToday());
@@ -131,5 +131,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private Timestamp getToday() {
 		return new Timestamp(System.currentTimeMillis());
 	}
+
+	
 
 }

@@ -33,5 +33,12 @@ public class RestPointExceptionHandler {
 		String error = "Insufficient Funds " + ex.getMessage();
 		return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, error, ex));
 	}
+	
+	@ExceptionHandler(value = { EmptyTransactionList.class })
+	protected ResponseEntity<Object> handleIfOverDraft(
+			EmptyTransactionList ex, WebRequest request) {
+		String error = "At present  " + ex.getMessage();
+		return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, error, ex));
+	}
 
 }

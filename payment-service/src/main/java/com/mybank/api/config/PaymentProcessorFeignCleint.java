@@ -15,7 +15,7 @@ import com.mybank.intrabank.model.FundTransferDetl;
  *
  */
 
-@FeignClient(name ="process", url="http://localhost:8083/", configuration = EnableFiegnClientConfig.class)
+@FeignClient(name ="process", url="${payment-processor-url}", configuration = EnableFiegnClientConfig.class)
 public interface PaymentProcessorFeignCleint {
 	
 	@PostMapping("/process/initiateTransfer")
