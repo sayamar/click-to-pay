@@ -1,15 +1,11 @@
 package com.mybank.api.response;
 
-import com.mybank.model.FundTransferDetl;
+import com.mybank.data.entities.TransferHistory;
 
 public class PaymentResponse {
 	
-
-	
 	 public String referenceId;
 	 public String status;
-	 
-	 
 	 
 	public PaymentResponse() {
 		super();
@@ -32,10 +28,10 @@ public class PaymentResponse {
 		this.status = status;
 	}
 	
-	public static PaymentResponse createPaymentresponse(FundTransferDetl paylod, String message) {
+	public static PaymentResponse createPaymentresponse(TransferHistory history) {
 		PaymentResponse paymentResponse = new PaymentResponse();
-		paymentResponse.setReferenceId(paylod.getReferenceId());
-		paymentResponse.setStatus(message);
+		paymentResponse.setReferenceId(history.getPaymentRefId());
+		paymentResponse.setStatus(history.getStatus());
 		return paymentResponse;
 	}
 	 

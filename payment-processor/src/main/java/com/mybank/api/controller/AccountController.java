@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mybank.api.response.BalanceResponse;
 import com.mybank.data.entities.Account;
 import com.mybank.data.entities.Transaction;
 import com.mybank.exception.AccountNotFoundException;
@@ -40,13 +41,13 @@ public class AccountController {
 
 	@ExceptionHandler(AccountNotFoundException.class)
 	@GetMapping(path = "{accountId}/balance" )
-	public ResponseEntity<Account> getBalance(@PathVariable("accountId") Long accountId) throws Exception {
+	public ResponseEntity<BalanceResponse> getBalance(@PathVariable("accountId") Long accountId) throws Exception {
 		log.info("Get Balance for {}", accountId);
 
 		CompletableFuture<Account> future = 
 				CompletableFuture.supplyAsync(() -> this.processString(accountId));
 		Account account = future.get();
-		return new ResponseEntity<Account>(account, HttpStatus.OK);
+		return new ResponseEntity<>(new BalanceResponse(account.getAccnumber(), account.getBalance()), HttpStatus.OK);
 	}
 
 	@ExceptionHandler(EmptyTransactionList.class)

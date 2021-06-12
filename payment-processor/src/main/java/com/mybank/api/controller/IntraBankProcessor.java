@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mybank.api.response.PaymentResponse;
+import com.mybank.data.entities.TransferHistory;
 import com.mybank.exception.FundTransferException;
 import com.mybank.model.FundTransferDetl;
 import com.mybank.service.PaymentService;
@@ -29,7 +30,8 @@ public class IntraBankProcessor {
 	@PostMapping("/initiateTransfer")
 	public PaymentResponse initiateTransfer(@RequestBody FundTransferDetl payload) {
 		log.info("Inititate transfer for {}", payload.getReferenceId());
-		return paymentService.toOwnAccounts(payload);
+		TransferHistory transferHist = paymentService.toOwnAccounts(payload);
+		return PaymentResponse.createPaymentresponse(transferHist);
 
 	}
 

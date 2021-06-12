@@ -10,38 +10,41 @@ import org.springframework.stereotype.Service;
 import com.mybank.api.response.PaymentResponse;
 import com.mybank.data.entities.Account;
 import com.mybank.data.entities.Transaction;
+import com.mybank.data.entities.TransferHistory;
 import com.mybank.data.repos.AccountRepository;
 import com.mybank.data.repos.TransactionRepository;
+import com.mybank.data.repos.TransferHistoryRepo;
 import com.mybank.exception.AccountNotFoundException;
 import com.mybank.exception.OverDraftException;
 import com.mybank.model.FundTransferDetl;
+import com.mybank.model.TranferStatus;
 import com.mybank.service.handlers.TransactionHandler;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-	private static final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class); 
-	
+	private static final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class);
+
 	private final AccountRepository accountRepository;
 	private final TransactionRepository transRepository;
 	private final TransactionHandler tnxHandler;
+	private final TransferHistoryRepo tranferHistRepository;
 
 	@Autowired
 	public PaymentServiceImpl(AccountRepository accountRepository, TransactionRepository transRepository,
-			TransactionHandler tnxHandler) {
+			TransactionHandler tnxHandler, TransferHistoryRepo tranferHistRepository) {
 		this.accountRepository = accountRepository;
 		this.transRepository = transRepository;
 		this.tnxHandler = tnxHandler;
+		this.tranferHistRepository = tranferHistRepository;
 
 	}
 
 	@Override
-	public PaymentResponse toOwnAccounts(FundTransferDetl payload) {
+	public TransferHistory toOwnAccounts(FundTransferDetl payload) {
 		log.info("Initiate Funds transfer {} to ", payload.getCreditAccountId());
 		createTrannsactionsList(payload);
-		tranferringBalance(payload);
-		return PaymentResponse.createPaymentresponse(payload, "Success");
-
+		return tranferringBalance(payload);
 	}
 
 	@Override
@@ -56,9 +59,9 @@ public class PaymentServiceImpl implements PaymentService {
 	 * 
 	 * @param payload
 	 */
-	private void tranferringBalance(FundTransferDetl payload) {
+	private TransferHistory tranferringBalance(FundTransferDetl payload) {
 
-		log.info("Transferring the balance {} ", payload.getDebitAccountId(),payload.getCreditAccountId());
+		log.info("Transferring the balance {} ", payload.getDebitAccountId(), payload.getCreditAccountId());
 		Account debitAccount = this.accountRepository.getAccountForUpdate(Long.valueOf(payload.getDebitAccountId()))
 				.orElseThrow(() -> new AccountNotFoundException(
 						"Debit Account : " + Long.valueOf(payload.getDebitAccountId()) + " Not exist"));
@@ -72,11 +75,10 @@ public class PaymentServiceImpl implements PaymentService {
 					"Account id: " + debitAccount.getAccnumber() + " does not have enough balance to transfer",
 					"ERR_CLIENT_001");
 		}
-		
+
 		if (debitAccount.getLimit_amount().compareTo(new Double(payload.getAmount())) < 0) {
 			throw new OverDraftException(
-					"Account id: " + debitAccount.getAccnumber() + " exceeds the limit for the day",
-					"ERR_CLIENT_001");
+					"Account id: " + debitAccount.getAccnumber() + " exceeds the limit for the day", "ERR_CLIENT_001");
 		}
 
 		debitAccount.setBalance(this.tnxHandler.debitAccount(new Double(payload.getAmount()), debitAccount));
@@ -86,6 +88,16 @@ public class PaymentServiceImpl implements PaymentService {
 
 		creditAccount.setBalance(this.tnxHandler.creditAccount(new Double(payload.getAmount()), creditAccount));
 		this.accountRepository.saveAndFlush(creditAccount);
+
+		TransferHistory transferHistory = new TransferHistory();
+		transferHistory.setDebitorId(debitAccount.getAccnumber());
+		transferHistory.setCreditorId(creditAccount.getAccnumber());
+		transferHistory.setQuantity(payload.getAmount());
+		transferHistory.setPaymentRefId(payload.getReferenceId());
+		transferHistory.setStatus(TranferStatus.SUCCESS.toString());
+		transferHistory.setTranferredOn(getToday());
+
+		return this.tranferHistRepository.saveAndFlush(transferHistory);
 
 	}
 
@@ -131,7 +143,5 @@ public class PaymentServiceImpl implements PaymentService {
 	private Timestamp getToday() {
 		return new Timestamp(System.currentTimeMillis());
 	}
-
-	
 
 }
